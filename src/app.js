@@ -4,15 +4,7 @@ import './main.sass';
 let addButton = document.getElementById("addBtn");
 let close = document.getElementsByClassName("todo__item-close");
 let list = document.querySelector('ul');
-
-
-// Close button
-for (let i = 0; i < close.length; i++) {
-    close[i].onclick = function () {
-        let div = this.parentElement.parentElement;
-        div.remove();
-    }
-}
+let todoItem = [];
 
 // Add checked status
 list.addEventListener('click', function (ev) {
@@ -29,16 +21,13 @@ input.addEventListener("keyup", function (event) {
         document.getElementById("addBtn").click();
     }
 });
-
 // Create a new list item when click button
 addButton.addEventListener('click', function (event) {
     let li = document.createElement("li");
     let addClassWarning = document.getElementById("inputText");
     let inputValue = document.getElementById("inputText").value;
-    let todo = [];
-    todo.push(inputValue);
 
-    localStorage.setItem('toDoItem', JSON.stringify(todo));
+    todoItem.push(inputValue);
 
     // li.appendChild(addItem);
     li.className = "todo__item";
@@ -54,8 +43,10 @@ addButton.addEventListener('click', function (event) {
     if (inputValue === '') {
         addClassWarning.classList.add("todo__header-warning");
         setTimeout(() => addClassWarning.classList.remove("todo__header-warning"), 2500);
+        localStorage.setItem('toDoItem', JSON.stringify(todoItem));
     } else {
         document.getElementById("itemsList").appendChild(li);
+        localStorage.setItem('toDoItem', JSON.stringify(todoItem));
     }
 
     document.getElementById("inputText").value = "";
@@ -63,7 +54,7 @@ addButton.addEventListener('click', function (event) {
     for (let i = 0; i < close.length; i++) {
         close[i].onclick = function () {
             let div = this.parentElement.parentElement;
-            div.remove();
+            delete todoItem[this];
         }
     }
 
