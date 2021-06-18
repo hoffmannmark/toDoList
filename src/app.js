@@ -4,13 +4,15 @@ import './main.sass';
 let addButtonAction = document.getElementById("addBtn");
 let close = document.getElementsByClassName("todo__item-close");
 let list = document.querySelector('ul');
-let toDoItem = [];
-let getLocalStorage = JSON.parse(localStorage.getItem('toDoItem'));
-let html = function (item_text) {
+
+let getLocalStorage = () => {
+    return JSON.parse(localStorage.getItem('toDoItem'));
+};
+let html = function (itemValue) {
     return `
         <label class="todo__item-label">
             <input class="todo__item-checkbox" type="checkbox">
-            ${item_text}
+            ${itemValue}
         </label>
         <div class="todo__item-icons">
             <img class="todo__item-icon todo__item-close" src="https://raw.githubusercontent.com/hoffmannmark/toDoList/639d36b4c8566d86eaaa657cb64608f62e6060ad/img/trash.svg" alt="">
@@ -35,49 +37,54 @@ input.addEventListener("keyup", function (event) {
 
 // Create a new list item on click button
 addButtonAction.addEventListener('click', function (event) {
-    let liCountId = document.querySelectorAll('#itemsList > li').length;
     let addClassWarning = document.getElementById("inputText");
     let inputValue = document.getElementById("inputText").value;
-    let li = document.createElement("li");
-    li.setAttribute('data-id', liCountId);
 
-    toDoItem.push(inputValue);
-
-    li.className = "todo__item";
-    li.innerHTML = html(inputValue);
-
-    // add item & warning
     if (inputValue === '') {
         addClassWarning.classList.add("todo__header-warning");
         setTimeout(() => addClassWarning.classList.remove("todo__header-warning"), 2500);
     } else {
-        // return object
-        document.getElementById("itemsList").appendChild(li);
-        // add ket to array
-        localStorage.setItem('toDoItem', JSON.stringify(toDoItem));
+        addItem(inputValue)
     }
 
-    // clean input
     document.getElementById("inputText").value = "";
 
-    // close action
-    // for (let i = 0; i < close.length; i++) {
-    //     close[i].onclick = function () {
-    //
-    //         let element = this.parentElement.parentElement;
-    //
-    //         element.remove();
-    //
-    //         console.log(localStorage.removeItem('toDoItem'));
-    //     }
-    // }
 
 });
 
 window.addEventListener('DOMContentLoaded', function (event) {
-
-
     initTodo()
+})
+
+function initTodo() {
+    document.querySelector('#itemsList').innerHTML = "";
+
+    if (getLocalStorage() === null) {
+        localStorage.setItem('toDoItem', '[]');
+    } else {
+        for (let i = 0; i < getLocalStorage().length; i++) {
+            let liCountId = document.querySelectorAll('#itemsList > li').length;
+            let itm = document.createElement("li");
+
+            itm.setAttribute('data-id', liCountId);
+            list.appendChild(itm);
+            itm.className = 'todo__item';
+            itm.innerHTML = html(getLocalStorage()[i]);
+
+        }
+    }
+    let checkbox = document.getElementsByClassName("todo__item-checkbox");
+
+    if (checkbox.checked) {
+
+    }
+
+
+
+    deleteEventsTodoItem();
+}
+
+function deleteEventsTodoItem() {
     for (let i = 0; i < close.length; i++) {
         close[i].onclick = function () {
 
@@ -85,26 +92,20 @@ window.addEventListener('DOMContentLoaded', function (event) {
             let countIndex = element.getAttribute('data-id');
             element.remove();
 
-            var getLocalStorage = JSON.parse(localStorage.getItem("toDoItem"));
+            let getLocalStorage = JSON.parse(localStorage.getItem("toDoItem"));
             getLocalStorage.splice(countIndex, 1);
             localStorage.removeItem('toDoItem');
             localStorage.setItem('toDoItem', JSON.stringify(getLocalStorage));
             initTodo()
         }
     }
+}
 
-})
+function addItem(value) {
+    let hotLocalStorage = JSON.parse(localStorage.getItem("toDoItem"));
 
-function initTodo() {
-    for (let i = 0; i < getLocalStorage.length; i++) {
-        if (getLocalStorage.length !== null) {
-            let liCountId = document.querySelectorAll('#itemsList > li').length;
-            let itm = document.createElement("li");
-            itm.setAttribute('data-id', liCountId);
-            list.appendChild(itm);
-            itm.className = 'todo__item';
-            itm.innerHTML = html(getLocalStorage[i]);
-
-        }
-    }
+    hotLocalStorage.push(value);
+    localStorage.removeItem('toDoItem');
+    localStorage.setItem('toDoItem', JSON.stringify(hotLocalStorage));
+    initTodo()
 }
