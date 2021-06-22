@@ -4,7 +4,6 @@ import './main.sass';
 let addButtonAction = document.getElementById("addBtn");
 let close = document.getElementsByClassName("todo__item-close");
 let list = document.querySelector('ul');
-
 let getLocalStorage = () => {
     return JSON.parse(localStorage.getItem('toDoItem'));
 };
@@ -23,6 +22,8 @@ let html = function (itemValue) {
 list.addEventListener('click', function (ev) {
     if (ev.target.tagName === 'LABEL') {
         ev.target.classList.toggle('todo__item-checked');
+
+        checkClass();
     }
 }, false);
 
@@ -44,18 +45,19 @@ addButtonAction.addEventListener('click', function (event) {
         addClassWarning.classList.add("todo__header-warning");
         setTimeout(() => addClassWarning.classList.remove("todo__header-warning"), 2500);
     } else {
-        addItem(inputValue)
+        addItem(inputValue);
     }
 
     document.getElementById("inputText").value = "";
 
-
 });
 
+// init ToDoList when page is loaded
 window.addEventListener('DOMContentLoaded', function (event) {
-    initTodo()
-})
+    initTodo();
+});
 
+// Create list item
 function initTodo() {
     document.querySelector('#itemsList').innerHTML = "";
 
@@ -63,6 +65,7 @@ function initTodo() {
         localStorage.setItem('toDoItem', '[]');
     } else {
         for (let i = 0; i < getLocalStorage().length; i++) {
+
             let liCountId = document.querySelectorAll('#itemsList > li').length;
             let itm = document.createElement("li");
 
@@ -73,39 +76,52 @@ function initTodo() {
 
         }
     }
-    let checkbox = document.getElementsByClassName("todo__item-checkbox");
-
-    if (checkbox.checked) {
-
-    }
-
-
 
     deleteEventsTodoItem();
 }
 
+// Delete list item
 function deleteEventsTodoItem() {
     for (let i = 0; i < close.length; i++) {
         close[i].onclick = function () {
 
             let element = this.parentElement.parentElement;
             let countIndex = element.getAttribute('data-id');
-            element.remove();
-
             let getLocalStorage = JSON.parse(localStorage.getItem("toDoItem"));
+
+            element.remove();
             getLocalStorage.splice(countIndex, 1);
+
             localStorage.removeItem('toDoItem');
             localStorage.setItem('toDoItem', JSON.stringify(getLocalStorage));
-            initTodo()
+
+            initTodo();
         }
     }
 }
 
+// Add list item to localStorage
 function addItem(value) {
     let hotLocalStorage = JSON.parse(localStorage.getItem("toDoItem"));
 
     hotLocalStorage.push(value);
     localStorage.removeItem('toDoItem');
     localStorage.setItem('toDoItem', JSON.stringify(hotLocalStorage));
-    initTodo()
+
+    // localStorage.removeItem('checkedItem');
+    // localStorage.setItem('checkedItem', JSON.stringify(hotLocalStorage));
+
+    initTodo();
+}
+
+// Check status item
+function checkClass() {
+    let checked = document.getElementsByClassName('todo__item-label');
+    let checkedStorage = localStorage.getItem("hotLocalStorage");
+
+    if (checked !== null) {
+        localStorage.setItem('checkedItem', JSON.stringify(checkedStorage));
+    }
+    checked.setAttribute('data-id');
+
 }

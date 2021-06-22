@@ -97,12 +97,9 @@ body {
   text-transform: uppercase;
   margin-bottom: 24px;
   line-height: 100%;
-}
-.todo__title span {
-  background: linear-gradient(116.57deg, #262727 1.96%, #1a4242 89.07%);
+  background: linear-gradient(180deg, #262727 1.96%, #1a4242 89.07%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  display: inline-block;
 }
 .todo__header {
   background: #1a4242;
