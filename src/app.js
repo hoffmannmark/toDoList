@@ -7,28 +7,21 @@ let list = document.querySelector('ul');
 let getLocalStorage = () => {
     return JSON.parse(localStorage.getItem('toDoItem'));
 };
-let html = function (itemValue) {
+let html = function (value) {
     return `
-        <label class="todo__item-label">
-            <input class="todo__item-checkbox" type="checkbox">
-            ${itemValue}
+        <label class="todo__item-label" id="label">
+            <input class="todo__item-checkbox" type="checkbox" id="checkBox">
+            ${value.title}
         </label>
         <div class="todo__item-icons">
             <img class="todo__item-icon todo__item-close" src="https://raw.githubusercontent.com/hoffmannmark/toDoList/639d36b4c8566d86eaaa657cb64608f62e6060ad/img/trash.svg" alt="">
         </div>`
 };
-
-// Add checked status
-list.addEventListener('click', function (ev) {
-    if (ev.target.tagName === 'LABEL') {
-        ev.target.classList.toggle('todo__item-checked');
-
-        checkClass();
-    }
-}, false);
+let storage = JSON.parse(localStorage.getItem("toDoItem"));
+let input = document.getElementById("inputText");
+let item = document.querySelectorAll("data-id").length;
 
 // Enter button push action
-let input = document.getElementById("inputText");
 input.addEventListener("keyup", function (event) {
     if (event.keyCode === 13) {
         event.preventDefault();
@@ -55,6 +48,8 @@ addButtonAction.addEventListener('click', function (event) {
 // init ToDoList when page is loaded
 window.addEventListener('DOMContentLoaded', function (event) {
     initTodo();
+    watchCheckedStatus();
+
 });
 
 // Create list item
@@ -78,6 +73,7 @@ function initTodo() {
     }
 
     deleteEventsTodoItem();
+
 }
 
 // Delete list item
@@ -96,32 +92,50 @@ function deleteEventsTodoItem() {
             localStorage.setItem('toDoItem', JSON.stringify(getLocalStorage));
 
             initTodo();
+
         }
     }
 }
 
 // Add list item to localStorage
-function addItem(value) {
-    let hotLocalStorage = JSON.parse(localStorage.getItem("toDoItem"));
+function addItem() {
 
-    hotLocalStorage.push(value);
-    localStorage.removeItem('toDoItem');
-    localStorage.setItem('toDoItem', JSON.stringify(hotLocalStorage));
+    let existingEntries = JSON.parse(localStorage.getItem("toDoItem"));
+    let entryTitle = document.getElementById("inputText").value;
+    let entry = {
+        "title": entryTitle,
+        "checkedStatus": false,
+    };
 
-    // localStorage.removeItem('checkedItem');
-    // localStorage.setItem('checkedItem', JSON.stringify(hotLocalStorage));
+    // Save allEntries back to local storage
+    existingEntries.push(entry);
+    localStorage.setItem("toDoItem", JSON.stringify(existingEntries));
 
     initTodo();
 }
 
-// Check status item
-function checkClass() {
-    let checked = document.getElementsByClassName('todo__item-label');
-    let checkedStorage = localStorage.getItem("hotLocalStorage");
+// checked status when click
+onclick = function (ev) {
 
-    if (checked !== null) {
-        localStorage.setItem('checkedItem', JSON.stringify(checkedStorage));
+    if (ev.target.tagName === 'LABEL') {
+        storage[0].checkedStatus = !storage[item].checkedStatus;
+        localStorage.setItem("toDoItem", JSON.stringify(storage));
     }
-    checked.setAttribute('data-id');
+
+    watchCheckedStatus();
 
 }
+
+function watchCheckedStatus() {
+    let checkBox = document.getElementById("checkBox");
+    let label = document.getElementById("label");
+
+    if (storage[0].checkedStatus === true) {
+        checkBox.checked = true;
+        label.classList.add('todo__item-checked');
+    } else {
+        label.classList.remove('todo__item-checked');
+    }
+}
+
+console.log(storage);
