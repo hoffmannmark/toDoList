@@ -123,8 +123,6 @@ function watchCheckedStatus() {
 
     let checkBox = document.querySelector('.todo__item-checkbox');
     let label = document.querySelector('.todo__item-label');
-    let item = this.parentElement;
-    let kkk = item.getAttribute('data-id');
 
     if (storage[0].checkedStatus === true) {
         checkBox.checked = true;
